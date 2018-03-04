@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WeatherUI</string>
+    <string name="api_key">f4e9e96d63fa43a1a36228d11a7071c3</string>
+    <string name="user_name">hd_hunter</string>
+    <string name="close">Close</string>
+    <string name="open">Open</string>
+</resources>
