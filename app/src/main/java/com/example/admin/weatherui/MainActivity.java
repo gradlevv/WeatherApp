@@ -4,9 +4,14 @@ package com.example.admin.weatherui;
 
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,6 +20,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,6 +28,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
@@ -31,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.weatherui.adapter.MyPagerAdapter;
+import com.example.admin.weatherui.config.Config;
 import com.example.admin.weatherui.db.Cities;
 import com.example.admin.weatherui.db.CitiesDao;
 import com.example.admin.weatherui.db.DaoSession;
@@ -56,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         , GoogleApiClient.OnConnectionFailedListener{
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+
+    private BroadcastReceiver registrationBroadcastReceiver;
 
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
@@ -111,6 +121,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             currentCity.setText(lst.get(0).getCityName());
         }
 
+        registrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Config.STR_PUSH)) {
+                    String message = intent.getStringExtra("message");
+                    showNotification("Weather Alert!!",message);
+                }
+            }
+        };
+
         citiesList = new SparseArray<>();
         citiesList= fetchLatLonFromDb();
         indicatorView.setCount(citiesList.size());
@@ -120,6 +140,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+    }
+
+    private void showNotification(String title, String message) {
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+        builder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.sun)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(contentIntent);
+
+        NotificationManager notificationManager = (NotificationManager)getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1,builder.build());
     }
 
 
@@ -211,8 +247,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(registrationBroadcastReceiver);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(registrationBroadcastReceiver,
+                new IntentFilter("registrationComplete"));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(registrationBroadcastReceiver,
+                new IntentFilter(Config.STR_PUSH));
+
         helper = new PreferencesHelper(this);
         checkPlayServices();
         if (!helper.getFirstTimeLocation()) {

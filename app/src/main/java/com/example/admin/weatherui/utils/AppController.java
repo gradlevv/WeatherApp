@@ -1,6 +1,9 @@
 package com.example.admin.weatherui.utils;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 
 import com.example.admin.weatherui.db.DaoMaster;
@@ -14,11 +17,15 @@ import uk.co.chrisjenx.calligraphy.R;
 
 public class AppController extends Application {
 
+    private static AppController instance;
     private DaoSession daoSession;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        instance =this;
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this,"weather");
         Database db = helper.getWritableDb();
@@ -33,9 +40,23 @@ public class AppController extends Application {
         );
    }
 
-
+   public static AppController getInstance(){
+       return instance;
+   }
 
    public DaoSession getDaoSession(){
         return daoSession;
+    }
+
+
+   public static boolean hasNetwork () {
+        return instance.isNetworkAvailable();
+    }
+
+
+   public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

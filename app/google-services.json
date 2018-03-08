@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "797915010361",
+    "firebase_url": "https://weatherui-b53e8.firebaseio.com",
+    "project_id": "weatherui-b53e8",
+    "storage_bucket": "weatherui-b53e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797915010361:android:8740777756134b23",
+        "android_client_info": {
+          "package_name": "com.example.admin.weatherui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797915010361-0bqluu9pjgivt1ofnvekk2iboofaj6ch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.admin.weatherui",
+            "certificate_hash": "cab09239148e40607f1b97c3fd84c1a25c64f45d"
+          }
+        },
+        {
+          "client_id": "797915010361-umnistt8i7eimsblqh2cs3nms8s2n5jb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMnmKeHcTJ1GNza000j3hs9gqXVj9G0j0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "797915010361-umnistt8i7eimsblqh2cs3nms8s2n5jb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
