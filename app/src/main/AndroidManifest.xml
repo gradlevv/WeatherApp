@@ -22,9 +22,6 @@
             android:name=".MainActivity"
             android:theme="@style/AppTheme.ActionBar.Transparent">
         </activity>
-        <activity android:name=".SettingActivity">
-
-        </activity>
         <activity android:name=".AddCityActivity"
             android:theme="@style/AppTheme.ActionBar.Transparent">
 
