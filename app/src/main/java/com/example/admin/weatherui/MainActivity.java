@@ -1,8 +1,6 @@
 package com.example.admin.weatherui;
 
 
-
-
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -72,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private ViewPager vpPager;
     private MyPagerAdapter adapterViewPager;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
     private ActionBar actionBar;
     private Toolbar toolBar;
     private PageIndicatorView indicatorView;
@@ -92,15 +88,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         currentCity= (TextView)findViewById(R.id.currentCity);
-        drawerLayout =(DrawerLayout)findViewById(R.id.placeHolder);
         vpPager = (ViewPager) findViewById(R.id.viewPager);
         toolBar =(Toolbar)findViewById(R.id.toolBar);
         indicatorView=(PageIndicatorView)findViewById(R.id.pageIndicator);
         setSupportActionBar(toolBar);
 
         actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
         daoSession = ((AppController)getApplication()).getDaoSession();
@@ -135,10 +128,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         citiesList= fetchLatLonFromDb();
         indicatorView.setCount(citiesList.size());
 
-
-        toggle = new ActionBarDrawerToggle(this,drawerLayout,toolBar,R.string.close,R.string.open);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
     }
 
@@ -434,27 +423,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         citiesDao.insert(cities);
     }
 
-
-    private void deleteLatLonFromDB(){
-        FirstFragment fragment = citiesList.valueAt(adapterPosition);
-        double lat=fragment.getArguments().getDouble("lat");
-        double lon=fragment.getArguments().getDouble("lon");
-        DeleteQuery<Cities> citiesDeleteQuery = daoSession.queryBuilder(Cities.class)
-                .whereOr(CitiesDao.Properties.Latitude.eq(lat),CitiesDao.Properties.Longitude.eq(lon),
-                        CitiesDao.Properties.CityName.eq(currentCity.getText()))
-                .buildDelete();
-        citiesDeleteQuery.executeDeleteWithoutDetachingEntities();
-        daoSession.clear();
-
-        CitiesDao citiesDao = daoSession.getCitiesDao();
-        List<Cities> lst =citiesDao.queryBuilder()
-                .list();
-        if (adapterPosition>0) {
-            currentCity.setText(lst.get(adapterPosition - 1).getCityName());
-        }else {
-            currentCity.setText(lst.get(0).getCityName());
-        }
-    }
 
 
 }

@@ -22,25 +22,11 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
         CitiesDao.createTable(db, ifNotExists);
-        CurrentDetailsDao.createTable(db, ifNotExists);
-        CurrentsDao.createTable(db, ifNotExists);
-        HourDao.createTable(db, ifNotExists);
-        HoursDetailsDao.createTable(db, ifNotExists);
-        WeatherIconsDao.createTable(db, ifNotExists);
-        WeeksDao.createTable(db, ifNotExists);
-        WeeksDetailsDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         CitiesDao.dropTable(db, ifExists);
-        CurrentDetailsDao.dropTable(db, ifExists);
-        CurrentsDao.dropTable(db, ifExists);
-        HourDao.dropTable(db, ifExists);
-        HoursDetailsDao.dropTable(db, ifExists);
-        WeatherIconsDao.dropTable(db, ifExists);
-        WeeksDao.dropTable(db, ifExists);
-        WeeksDetailsDao.dropTable(db, ifExists);
     }
 
     /**
@@ -60,13 +46,6 @@ public class DaoMaster extends AbstractDaoMaster {
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(CitiesDao.class);
-        registerDaoClass(CurrentDetailsDao.class);
-        registerDaoClass(CurrentsDao.class);
-        registerDaoClass(HourDao.class);
-        registerDaoClass(HoursDetailsDao.class);
-        registerDaoClass(WeatherIconsDao.class);
-        registerDaoClass(WeeksDao.class);
-        registerDaoClass(WeeksDetailsDao.class);
     }
 
     public DaoSession newSession() {

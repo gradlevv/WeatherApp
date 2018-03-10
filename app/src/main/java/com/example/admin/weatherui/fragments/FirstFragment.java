@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,19 +23,15 @@ import com.example.admin.weatherui.R;
 import com.example.admin.weatherui.adapter.HoursAdapter;
 import com.example.admin.weatherui.adapter.WeekAdapter;
 import com.example.admin.weatherui.api.WeatherApiService;
-import com.example.admin.weatherui.db.DaoSession;
 import com.example.admin.weatherui.model.Current;
 import com.example.admin.weatherui.model.Hours;
 import com.example.admin.weatherui.model.HoursDatum;
 import com.example.admin.weatherui.model.Week;
 import com.example.admin.weatherui.model.WeekDatum;
-import com.example.admin.weatherui.utils.AppController;
 import com.example.admin.weatherui.utils.PreferencesHelper;
 import com.example.admin.weatherui.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ public class FirstFragment extends Fragment{
 
     private ImageView currentIcon,currentIconSec;
 
-    private DrawerLayout mainLayout;
+    private RelativeLayout mainLayout;
 
     private RecyclerView hourRecyclerView,weekRecyclerView;
     private HoursAdapter hoursAdapter;
@@ -111,7 +109,7 @@ public class FirstFragment extends Fragment{
         currentMaxtemp =(TextView)view.findViewById(R.id.txtMaxTemp);
         currentMinTemp = (TextView)view.findViewById(R.id.txtMinTemp);
 
-        mainLayout =(DrawerLayout)view.findViewById(R.id.placeHolder);
+        mainLayout =(RelativeLayout) view.findViewById(R.id.placeHolder);
 
         currentIcon = (ImageView)view.findViewById(R.id.imgCurrentIcon);
         currentIconSec =(ImageView)view.findViewById(R.id.imgCurrent);
@@ -180,16 +178,15 @@ public class FirstFragment extends Fragment{
                     currentTime.setText(Utils.currentTime(newTimeZone));
                     currentDate.setText(Utils.currentDate());
 
-
-                    String url = Utils.urlForIcon(current.getData().get(0).getWeather().getIcon());
+                    String bgSource =currentTime.getText().toString();
                     int icon = Utils.iconId(current.getData().get(0).getWeather().getIcon());
 
                     if (getActivity()!=null) {
 
 //                        if (Utils.parseDate(bgSource).equals("day")){
-//                            mainLayout.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(),R.drawable.bg_day));
+//                            mainLayout.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.bg_day));
 //                        }else if (Utils.parseDate(bgSource).equals("night")){
-//                            mainLayout.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(),R.drawable.bg_nightt));
+//                            mainLayout.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.bg_nightt));
 //                        }
 
 
