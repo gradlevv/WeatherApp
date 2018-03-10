@@ -20,9 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,7 +47,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.rd.PageIndicatorView;
 
-import org.greenrobot.greendao.query.DeleteQuery;
 
 import java.io.IOException;
 import java.util.List;
@@ -79,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private DaoSession daoSession;
     private SparseArray<FirstFragment> citiesList;
 
-    private int adapterPosition;
 
 
     @Override
@@ -277,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     @Override
                     public void onPageSelected(int position) {
                         indicatorView.setSelection(position);
-                        adapterPosition = position;
                         CitiesDao citiesDao = daoSession.getCitiesDao();
                         List<Cities> lst = citiesDao.queryBuilder()
                                 .list();
