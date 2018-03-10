@@ -29,6 +29,7 @@ public class RetrofitClient {
 
         if (retrofit==null){
 
+            //create okhhtp client for offline cache
             OkHttpClient httpClient =new OkHttpClient
                     .Builder()
                     .addInterceptor(provideOfflineCacheInterceptor())
@@ -46,6 +47,8 @@ public class RetrofitClient {
         return retrofit;
     }
 
+
+    //config retrofit offline cache
     private static Cache provideCache(){
         Cache cache = null;
         try{
