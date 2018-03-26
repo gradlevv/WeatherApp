@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.weatherui.adapter.MyPagerAdapter;
-import com.example.admin.weatherui.config.Config;
 import com.example.admin.weatherui.db.Cities;
 import com.example.admin.weatherui.db.CitiesDao;
 import com.example.admin.weatherui.db.DaoSession;
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Toolbar toolBar;
     private PageIndicatorView indicatorView;
     private TextView currentCity;
+    private SwipeRefreshLayout refreshLayout;
 
     private PreferencesHelper helper;
     private DaoSession daoSession;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         currentCity= (TextView)findViewById(R.id.currentCity);
+        refreshLayout =(SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
         vpPager = (ViewPager) findViewById(R.id.viewPager);
         toolBar =(Toolbar)findViewById(R.id.toolBar);
         indicatorView=(PageIndicatorView)findViewById(R.id.pageIndicator);
@@ -94,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         daoSession = ((AppController)getApplication()).getDaoSession();
 
+        if (!AppController.hasNetwork()){
+            Toast.makeText(getApplicationContext(),"Please make sure you have internet connection!",Toast.LENGTH_LONG).show();
+        }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},PLAY_SERVICES_RESOLUTION_REQUEST);
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         registrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(Config.STR_PUSH)) {
+                if (intent.getAction().equals("pushNotification")) {
                     String message = intent.getStringExtra("message");
                     showNotification("Weather Alert!!",message);
                 }
@@ -245,11 +250,49 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 new IntentFilter("registrationComplete"));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(registrationBroadcastReceiver,
-                new IntentFilter(Config.STR_PUSH));
+                new IntentFilter("pushNotification"));
 
         helper = new PreferencesHelper(this);
         checkPlayServices();
+
         if (!helper.getFirstTimeLocation()) {
+
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+
+                    if (!AppController.hasNetwork()){
+                        Toast.makeText(getApplicationContext(),"Please make sure you have internet connection!",Toast.LENGTH_LONG).show();
+                    }
+
+                    citiesList = new SparseArray<>();
+                    citiesList = fetchLatLonFromDb();
+                    indicatorView.setCount(citiesList.size());
+                    adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), citiesList);
+                    vpPager.setAdapter(adapterViewPager);
+                    vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                @Override
+                                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                                }
+
+                                @Override
+                                public void onPageSelected(int position) {
+                                    indicatorView.setSelection(position);
+                                    CitiesDao citiesDao = daoSession.getCitiesDao();
+                                    List<Cities> lst = citiesDao.queryBuilder()
+                                            .list();
+                                    currentCity.setText(lst.get(position).getCityName());
+                                }
+
+                                @Override
+                                public void onPageScrollStateChanged(int state) {
+
+                                }
+                            });
+                    refreshLayout.setRefreshing(false);
+                }
+            });
 
             CitiesDao citiesDao = daoSession.getCitiesDao();
             List<Cities> lst =citiesDao.queryBuilder()
@@ -257,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (lst.size()==1){
                 currentCity.setText(lst.get(0).getCityName());
             }
-
 
             citiesList = new SparseArray<>();
             citiesList = fetchLatLonFromDb();

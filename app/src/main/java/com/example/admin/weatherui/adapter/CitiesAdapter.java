@@ -81,6 +81,7 @@ public class CitiesAdapter extends RecyclerSwipeAdapter<CitiesAdapter.CitiesVH> 
                     Cities cities = citiesList.get(holder.getAdapterPosition());
                     citiesList.remove(holder.getAdapterPosition());
                     notifyItemRemoved(holder.getAdapterPosition());
+                    notifyDataSetChanged();
                     notifyItemRangeChanged(holder.getAdapterPosition(), citiesList.size());
                     mItemManger.closeAllItems();
 

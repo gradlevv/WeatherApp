@@ -9,7 +9,6 @@
     android:id="@+id/placeHolder"
     tools:context="com.example.admin.weatherui.MainActivity">
 
-
     <TextView
         android:id="@+id/currentCity"
         android:text="-----"
@@ -20,14 +19,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
             <com.rd.PageIndicatorView
                 android:id="@+id/pageIndicator"
@@ -44,7 +48,9 @@
                 app:piv_viewPager="@id/viewPager"/>
 
 
-    </RelativeLayout>
+        </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
